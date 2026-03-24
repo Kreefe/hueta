@@ -1,0 +1,28 @@
+name: Build UEFI App
+
+on:
+  push:
+    branches: [ main ] # Запускать при каждом пуше в ветку main
+  workflow_dispatch: # Позволяет запускать вручную кнопку "Run workflow"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Используем чистый Линукс от Гитхаба
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y gcc make gnu-efi binutils
+
+      - name: Build EFI application
+        run: make
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: uefi-petya-app
+          path: boot.efi # Загрузить готовый файл
